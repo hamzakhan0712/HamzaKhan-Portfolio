@@ -1,7 +1,7 @@
-
 import { useEffect, useRef } from "react";
-import { User, Code, Briefcase, GraduationCap, Award, ExternalLink } from "lucide-react";
+import { User, Code, Briefcase, Brain, Database, BookOpen, ExternalLink, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -27,159 +27,174 @@ function AboutSection() {
     };
   }, []);
 
-const skills = [
-  { name: "React", category: "frontend" },
-  { name: "HTML/CSS", category: "frontend" },
-  { name: "JavaScript", category: "language" },
-  { name: "Python", category: "language" },
-  { name: "Django", category: "backend" },
-  { name: "Kotlin", category: "language" },
-  { name: "Node.js", category: "backend" },
-  { name: "REST APIs", category: "backend" },
-  { name: "PostgreSQL", category: "backend" },
-  { name: "AWS", category: "devops" },
-  { name: "Git", category: "devops" },
-];
+  const journey = [
+    {
+      year: "2021-2024",
+      title: "Full Stack Developer",
+      icon: Code,
+      description: "Built scalable web applications using Django, React, and modern JavaScript frameworks. Delivered 10+ production-ready projects.",
+      highlight: "3 Years Experience",
+    },
+    {
+      year: "2024-Present",
+      title: "Transitioning to Data Science",
+      icon: Brain,
+      description: "Expanding expertise into machine learning, data analysis, and AI. Building intelligent solutions that combine development with data science.",
+      highlight: "Active Learning",
+    },
+  ];
 
 
-  // const experiences = [
-  //   {
-  //     title: "Senior Frontend Developer",
-  //     company: "Tech Innovations Inc.",
-  //     period: "2021 - Present",
-  //     description: "Leading frontend development for enterprise applications"
-  //   },
-  //   {
-  //     title: "UI/UX Designer",
-  //     company: "Creative Solutions",
-  //     period: "2019 - 2021",
-  //     description: "Designed user interfaces for mobile and web applications"
-  //   }
-  // ];
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-10 md:py-32 lg:px-24 overflow-hidden reveal-container">
-      {/* We're using the global background component now */}
-
-      <div className="container mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full border border-primary/20 bg-background/50 backdrop-blur-sm text-sm font-medium">
-            <span className="text-primary mr-2">✦</span>
+    <section id="about" ref={sectionRef} className="relative py-20 md:py-12 overflow-hidden reveal-container">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center justify-center px-4 py-2 mb-6 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm text-sm font-medium"
+          >
+            <User className="w-4 h-4 text-primary mr-2" />
             About Me
-            <span className="text-primary ml-2">✦</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            My <span className="gradient-text bg-gradient-to-r from-white via-black to-white">Journey</span> & Expertise
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Passionate about creating exceptional digital experiences through innovative code and thoughtful design.
-          </p>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+          >
+            My <span className="gradient-text">Journey</span> & Expertise
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+          >
+            From building robust web applications to exploring the power of data science combining technical excellence with continuous learning.
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div className="reveal-content" style={{transitionDelay: "0.1s"}}>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-16 md:mb-20">
+          {/* Left Column - Image & Quote */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="reveal-content"
+          >
             <div className="relative">
-              <div className="aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border border-primary/20 bg-background/50 backdrop-blur-sm shadow-lg">
+              <div className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-2xl">
                 <img
                   src="/me.jpeg"
-                  alt="Profile"
+                  alt="Hamza Khan - Full Stack Developer transitioning to Data Science"
                   className="w-full h-full object-cover"
                 />
 
-                {/* Decorative elements - matching hero section style */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500/20 rounded-full blur-xl pulse-glow" />
-                <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-purple-500/20 rounded-full blur-xl pulse-glow" style={{animationDelay: '1.5s'}} />
-                <div className="absolute top-1/2 -right-6 w-12 h-12 bg-pink-500/20 rounded-full blur-xl pulse-glow" style={{animationDelay: '2s'}} />
+                {/* Floating Decorative Elements */}
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-4 -right-4 w-20 h-20 bg-primary/20 rounded-full blur-2xl"
+                />
+                <motion.div
+                  animate={{ y: [0, 10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  className="absolute -bottom-6 -left-6 w-24 h-24 bg-primary/15 rounded-full blur-2xl"
+                />
               </div>
 
-              <div className="absolute -bottom-8 -right-8 p-6 glass-card rounded-xl border border-white/10 shadow-lg max-w-xs bg-background/80 backdrop-blur-md">
-                <p className="font-serif italic text-lg">
-                  "Code is like humor. When you have to explain it, it's bad!"
+              {/* Quote Card */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="absolute -bottom-8 -right-4 md:-right-8 p-4 md:p-6 glass-card rounded-2xl border border-border/50 shadow-2xl max-w-xs bg-background/95 backdrop-blur-md"
+              >
+                <p className="font-serif italic text-sm md:text-base text-muted-foreground">
+                  "Data is the new oil, but code is the refinery that transforms it into insights."
                 </p>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="reveal-content" style={{transitionDelay: "0.3s"}}>
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold mb-4 flex items-center">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 mr-3">
-                    <User className="w-4 h-4 text-primary" />
-                  </span>
-                  About Me
-                </h3>
-                <div className="space-y-4 text-lg">
-               <p>
-                  I'm a skilled full-stack developer with strong expertise in web development, mobile application development, and DevOps. I have a solid foundation in programming languages such as Python, Java, and JavaScript, and work extensively across multiple layers of application architecture.
-                </p>
-
+          {/* Right Column - About Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="reveal-content space-y-8"
+          >
+            {/* About Me */}
+            <div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 flex items-center">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 mr-3">
+                  <User className="w-5 h-5 text-primary" />
+                </span>
+                About Me
+              </h3>
+              <div className="space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  My technical stack includes frameworks like Django,  Kotlin, React, and Next.js. I specialize in building scalable, maintainable, and high-performance applications with modern development practices—delivering secure and seamless user experiences across platforms.
+                  I'm a passionate <span className="text-foreground font-semibold">full-stack developer</span> with <span className="text-primary font-semibold">3 years of experience</span> building scalable web applications. My expertise spans across Django, React, RESTAPI and modern cloud technologies.
                 </p>
-
-                </div>
-              </div>
-
-              {/* <div>
-                <h3 className="text-2xl font-bold mb-4 flex items-center">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 mr-3">
-                    <Briefcase className="w-4 h-4 text-primary" />
-                  </span>
-                  Experience
-                </h3>
-                <div className="space-y-4">
-                  {experiences.map((exp, i) => (
-                    <div key={i} className="p-4 rounded-lg border border-primary/10 bg-background/50 backdrop-blur-sm hover:border-primary/30 transition-all">
-                      <div className="flex flex-wrap justify-between items-start mb-2">
-                        <h4 className="text-lg font-bold">{exp.title}</h4>
-                        <span className="text-sm text-muted-foreground">{exp.period}</span>
-                      </div>
-                      <p className="text-muted-foreground mb-1">{exp.company}</p>
-                      <p className="text-sm">{exp.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div> */}
-
-              <div>
-                <h3 className="text-2xl font-bold mb-4 flex items-center">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-900/10 dark:bg-gray-100/10 mr-3">
-                    <Code className="w-4 h-4 text-gray-900 dark:text-gray-100" />
-                  </span>
-                  Skills & Expertise
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, i) => (
-                    <span
-                      key={i}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all
-                        ${skill.category === 'frontend' ? 'border-gray-500/20 bg-gray-500/5 text-gray-700 dark:text-gray-300' : ''}
-                        ${skill.category === 'backend' ? 'border-gray-600/20 bg-gray-600/5 text-gray-800 dark:text-gray-200' : ''}
-                        ${skill.category === 'design' ? 'border-gray-400/20 bg-gray-400/5 text-gray-600 dark:text-gray-400' : ''}
-                        ${skill.category === 'language' ? 'border-gray-700/20 bg-gray-700/5 text-gray-900 dark:text-gray-100' : ''}
-                      `}
-                    >
-                      {skill.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Button
-                  className="group btn-glow pulse-glow"
-                  onClick={() => window.open('/resume.pdf', '_blank')}
-                >
-                  <span className="flex items-center text-black">
-                    Download Resume
-                    <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Button>
+                <p>
+                  Currently, I'm on an exciting journey <span className="text-foreground font-semibold">transitioning into data science</span>, combining my strong development background with machine learning and data analytics to create intelligent, data-driven solutions that solve real-world problems.
+                </p>
               </div>
             </div>
-          </div>
+
+            {/* Journey Timeline */}
+            <div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 flex items-center">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 mr-3">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                </span>
+                Career Path
+              </h3>
+              <div className="space-y-4">
+                {journey.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className="relative p-4 md:p-6 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+                        <item.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <h4 className="text-lg font-bold text-foreground">{item.title}</h4>
+                          <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 text-primary">
+                            {item.highlight}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">{item.year}</p>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
+
+      
       </div>
     </section>
   );

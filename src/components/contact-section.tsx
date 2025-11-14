@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Mail,
   Github,
   Linkedin,
-  Twitter,
-  Instagram,
   MapPin,
   Calendar,
   Copy,
-  CheckCircle,
   Download,
   Phone,
   Globe,
   FileText,
-  Send
+  Send,
+  CheckCircle2,
+  ExternalLink,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,48 +25,46 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import emailjs from '@emailjs/browser';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
-  }),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().min(5, "Subject must be at least 5 characters"),
+  message: z.string().min(20, "Message must be at least 20 characters"),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-interface ContactInfoItem {
-  icon: React.ReactNode;
+interface ContactMethod {
+  icon: React.ElementType;
   label: string;
   value: string;
-  action: (() => void) | null;
-  actionIcon: React.ReactNode | null;
   href: string;
+  copyable: boolean;
+  gradient: string;
 }
 
 interface SocialLink {
   name: string;
-  icon: React.ReactNode;
+  icon: React.ElementType;
   url: string;
-  color: string;
-  bgColor: string;
+  gradient: string;
+  description: string;
 }
 
 function ContactSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<"contact" | "connect">("contact");
-  
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
+      subject: "",
       message: "",
     },
   });
@@ -92,350 +90,496 @@ function ContactSection() {
     };
   }, []);
 
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast.success(`${type} copied to clipboard!`, {
-        position: "top-center",
-        duration: 2000,
-      });
-    }).catch(() => {
-      toast.error("Failed to copy to clipboard", {
-        position: "top-center",
-        duration: 2000,
-      });
-    });
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedItem(label);
+      toast.success(`${label} copied to clipboard!`);
+      setTimeout(() => setCopiedItem(null), 2000);
+    } catch (error) {
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   const onSubmit = async (data: FormData) => {
+    if (!formRef.current) return;
+
     setIsSubmitting(true);
+    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast.success("Message sent successfully!", {
-        description: "I'll get back to you soon.",
-        position: "top-center",
-      });
-      form.reset();
+      // Initialize EmailJS (only needs to be done once, but safe to call multiple times)
+      emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: data.name,
+          from_email: data.email,
+          subject: data.subject,
+          message: data.message,
+          to_name: "Hamza Khan", // Your name
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      if (result.status === 200) {
+        toast.success("Message sent successfully!", {
+          description: "I'll get back to you within 24-48 hours.",
+        });
+        form.reset();
+      }
     } catch (error) {
+      console.error("EmailJS Error:", error);
       toast.error("Failed to send message", {
-        description: "Please try again later.",
-        position: "top-center",
+        description: "Please try again or contact me directly via email.",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const contactInfo: ContactInfoItem[] = [
+  const contactMethods: ContactMethod[] = [
     {
-      icon: <Mail className="h-5 w-5" />,
+      icon: Mail,
       label: "Email",
       value: "hamza81khan81@gmail.com",
-      action: () => copyToClipboard("hamza81khan81@gmail.com", "Email"),
-      actionIcon: <Copy className="h-4 w-4" />,
-      href: "mailto:hamza81khan81@gmail.com"
+      href: "mailto:hamza81khan81@gmail.com",
+      copyable: true,
+      gradient: "from-blue-500/10 to-cyan-500/10",
     },
     {
-      icon: <Phone className="h-5 w-5" />,
+      icon: Phone,
       label: "Phone",
       value: "+91 12345 67890",
-      action: () => copyToClipboard("+911234567890", "Phone number"),
-      actionIcon: <Copy className="h-4 w-4" />,
-      href: "tel:+911234567890"
+      href: "tel:+911234567890",
+      copyable: true,
+      gradient: "from-green-500/10 to-emerald-500/10",
     },
     {
-      icon: <MapPin className="h-5 w-5" />,
+      icon: MapPin,
       label: "Location",
-      value: "Mumbra, India",
-      action: null,
-      actionIcon: null,
-      href: "https://maps.google.com?q=Mumbra,India"
+      value: "Mumbai, Maharashtra, India",
+      href: "https://maps.google.com?q=Mumbra,India",
+      copyable: false,
+      gradient: "from-purple-500/10 to-pink-500/10",
     },
     {
-      icon: <Calendar className="h-5 w-5" />,
+      icon: Calendar,
       label: "Availability",
       value: "Open to opportunities",
-      action: null,
-      actionIcon: null,
-      href: "#"
-    }
+      href: "#",
+      copyable: false,
+      gradient: "from-orange-500/10 to-yellow-500/10",
+    },
   ];
 
   const socialLinks: SocialLink[] = [
     {
       name: "GitHub",
-      icon: <Github className="h-5 w-5" />,
+      icon: Github,
       url: "https://github.com/hamzakhan0712",
-      color: "hover:bg-gray-900 hover:text-white",
-      bgColor: "bg-gray-900/10"
+      gradient: "from-gray-500 to-gray-700",
+      description: "View my code repositories",
     },
     {
-      name: "Resume",
-      icon: <FileText className="h-5 w-5" />,
-      url: "/resume.pdf",
-      color: "hover:bg-gray-900 hover:text-white",
-      bgColor: "bg-gray-900/10"
+      name: "LinkedIn",
+      icon: Linkedin,
+      url: "https://linkedin.com/in/yourprofile",
+      gradient: "from-blue-600 to-blue-800",
+      description: "Connect professionally",
     },
     {
-      name: "Developer's Group Website",
-      icon: <Globe className="h-5 w-5" />,
+      name: "Friends Developer's Group",
+      icon: Globe,
       url: "https://initcore.vercel.app/",
-       color: "hover:bg-gray-900 hover:text-white",
-      bgColor: "bg-gray-900/10"
-    },
-   
+      gradient: "from-indigo-500 to-purple-600",
+      description: "Developer's group website",
+    }
   ];
 
   return (
-    <section 
-      id="contact" 
-      className="relative py-12 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden reveal-container"
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="relative py-20 md:py-32 overflow-hidden reveal-container"
     >
-      <div ref={sectionRef} className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-background opacity-30" />
-        <div className="absolute left-1/2 top-0 -ml-[500px] h-[500px] w-[1000px] rounded-full bg-radial-gradient from-primary/30 via-transparent to-transparent opacity-20" />
+      {/* Decorative Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute top-1/2 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+        />
       </div>
 
-      <div className="container mx-auto relative z-10 max-w-7xl">
-        <div className="text-center mb-12 md:mb-16 lg:mb-20 ">
-          <motion.div 
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-20">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full border border-primary/20 bg-background/50 backdrop-blur-sm text-sm font-medium"
+            className="inline-flex items-center justify-center px-4 py-2 mb-6 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm text-sm font-medium"
           >
-            <span className="text-primary mr-2">✦</span>
-            Contact Me
-            <span className="text-primary ml-2">✦</span>
+            <MessageSquare className="w-4 h-4 text-primary mr-2" />
+            Get In Touch
           </motion.div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
           >
-            Get In <span className="gradient-text bg-gradient-to-r from-primary via-foreground to-primary">Touch</span>
+            Let's Work <span className="gradient-text">Together</span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
-            className="text-lg text-muted-foreground max-w-3xl mx-auto"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
           >
-            Looking for a full-stack developer with DevOps expertise to build scalable web/mobile applications?
-            I'm available for projects involving modern frameworks, cloud solutions, and end-to-end system development.
+            Have a project in mind or looking for a developer? I'm always open to discussing
+            new opportunities, creative ideas, or partnerships.
           </motion.p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-          {/* Left Side - Contact Info & Form */}
-          <div className="w-full md:w-1/2 space-y-8">
-            <Card className="overflow-hidden border-border/50 bg-background/70 backdrop-blur-md hover:shadow-lg transition-all duration-300">
-              <div className="p-6 md:p-8">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-                  <h3 className="text-xl sm:text-2xl font-bold">Contact Information</h3>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant={activeTab === "contact" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setActiveTab("contact")}
-                      className="flex-1 sm:flex-initial"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      <span className="hidden xs:inline">Contact</span>
-                    </Button>
-                    <Button
-                      variant={activeTab === "connect" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setActiveTab("connect")}
-                      className="flex-1 sm:flex-initial"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      <span className="hidden xs:inline">Connect</span>
-                    </Button>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+            {/* Left Column - Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col gap-6"
+            >
+              <Card className="h-max overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                <CardContent className="p-6 md:p-8">
+                  <header className="mb-8">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-2">Send Me a Message</h3>
+                    <p className="text-muted-foreground">
+                      Fill out the form below and I'll get back to you as soon as possible.
+                    </p>
+                  </header>
 
-                {activeTab === "contact" ? (
-                  <div className="space-y-3 sm:space-y-4">
-                    {contactInfo.map((item, index) => (
+                  <form
+                    ref={formRef}
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                    role="form"
+                    aria-label="Contact form"
+                    noValidate
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                       <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="group flex items-center justify-between p-3 sm:p-4 rounded-lg border border-border/30 hover:border-primary/50 transition-all bg-background/50"
+                        transition={{ duration: 0.3 }}
                       >
-                        <a 
-                          href={item.href} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="flex items-center space-x-3 sm:space-x-4 flex-grow min-w-0"
-                        >
-                          <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                            {item.icon}
-                          </div>
-                          <div className="min-w-0 overflow-hidden">
-                            <h4 className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
-                              {item.label}
-                            </h4>
-                            <p className="text-sm sm:font-medium truncate">
-                              {item.value}
-                            </p>
-                          </div>
-                        </a>
-                        {item.action && (
-                          <button
-                            onClick={item.action}
-                            className="flex-shrink-0 p-1 sm:p-2 rounded-lg hover:bg-primary/10 transition-colors"
-                            aria-label={`Copy ${item.label}`}
-                          >
-                            {item.actionIcon}
-                          </button>
+                        <label htmlFor="contact-name" className="block text-sm font-medium mb-2">
+                          Your Name <span className="text-red-500" aria-hidden="true">*</span>
+                        </label>
+                        <Input
+                          id="contact-name"
+                          name="name"
+                          placeholder="John Doe"
+                          {...form.register("name")}
+                          aria-invalid={!!form.formState.errors.name}
+                          className={cn(
+                            "h-11 transition-all",
+                            form.formState.errors.name && "border-red-500 focus-visible:ring-red-500"
+                          )}
+                        />
+                        {form.formState.errors.name && (
+                          <p className="text-xs text-red-500 mt-1.5" role="alert">
+                            {form.formState.errors.name.message}
+                          </p>
                         )}
                       </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.3, delay: 0.05 }}
+                      >
+                        <label htmlFor="contact-email" className="block text-sm font-medium mb-2">
+                          Your Email <span className="text-red-500" aria-hidden="true">*</span>
+                        </label>
+                        <Input
+                          id="contact-email"
+                          name="email"
+                          type="email"
+                          placeholder="john@example.com"
+                          {...form.register("email")}
+                          aria-invalid={!!form.formState.errors.email}
+                          className={cn(
+                            "h-11 transition-all",
+                            form.formState.errors.email && "border-red-500 focus-visible:ring-red-500"
+                          )}
+                        />
+                        {form.formState.errors.email && (
+                          <p className="text-xs text-red-500 mt-1.5" role="alert">
+                            {form.formState.errors.email.message}
+                          </p>
+                        )}
+                      </motion.div>
+                    </div>
+
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
                       viewport={{ once: true }}
-                    >
-                      <Input
-                        placeholder="Your Name"
-                        {...form.register("name")}
-                       
-                      />
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
-                      viewport={{ once: true }}
                     >
+                      <label htmlFor="contact-subject" className="block text-sm font-medium mb-2">
+                        Subject <span className="text-red-500" aria-hidden="true">*</span>
+                      </label>
                       <Input
-                        placeholder="Your Email"
-                        {...form.register("email")}
-                        
+                        id="contact-subject"
+                        name="subject"
+                        placeholder="Project Inquiry / Collaboration / Job Opportunity"
+                        {...form.register("subject")}
+                        aria-invalid={!!form.formState.errors.subject}
+                        className={cn(
+                          "h-11 transition-all",
+                          form.formState.errors.subject && "border-red-500 focus-visible:ring-red-500"
+                        )}
                       />
+                      {form.formState.errors.subject && (
+                        <p className="text-xs text-red-500 mt-1.5" role="alert">
+                          {form.formState.errors.subject.message}
+                        </p>
+                      )}
                     </motion.div>
+
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
                       viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: 0.15 }}
                     >
+                      <label htmlFor="contact-message" className="block text-sm font-medium mb-2">
+                        Message <span className="text-red-500" aria-hidden="true">*</span>
+                      </label>
                       <Textarea
-                        placeholder="Your Message"
-                        rows={5}
+                        id="contact-message"
+                        name="message"
+                        placeholder="Tell me about your project, requirements, or how we can work together..."
+                        rows={6}
                         {...form.register("message")}
-                       
+                        aria-invalid={!!form.formState.errors.message}
+                        className={cn(
+                          "resize-none transition-all",
+                          form.formState.errors.message && "border-red-500 focus-visible:ring-red-500"
+                        )}
                       />
+                      {form.formState.errors.message && (
+                        <p className="text-xs text-red-500 mt-1.5" role="alert">
+                          {form.formState.errors.message.message}
+                        </p>
+                      )}
                     </motion.div>
+
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.3 }}
                       viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      className="pt-2"
                     >
                       <Button
                         type="submit"
-                        className="w-full"
+                        size="lg"
+                        className="w-full sm:w-auto px-8 h-11"
                         disabled={isSubmitting}
+                        aria-disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Sending..." : "Send Message"}
-                        <Send className="h-4 w-4 ml-2" />
+                        {isSubmitting ? (
+                          <>
+                            <span className="animate-spin mr-2" aria-hidden="true">⏳</span>
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            Send Message
+                            <Send className="ml-2 h-4 w-4" aria-hidden="true" />
+                          </>
+                        )}
                       </Button>
                     </motion.div>
                   </form>
-                )}
-              </div>
-            </Card>
+                </CardContent>
+              </Card>
 
-            
-          </div>
+              {/* Quick Download */}
+              <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
+                    Quick Download
+                  </h3>
+                  <Button variant="outline" className="w-full h-11" size="lg" asChild>
+                    <a href="/resume.pdf" download rel="noopener" aria-label="Download resume (PDF)">
+                      <Download className="mr-2 h-5 w-5" aria-hidden="true" />
+                      Download Resume (PDF)
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
 
-          {/* Right Side - Social Links */}
-          <div className="w-full md:w-1/2">
-            <Card className="overflow-hidden border-border/50 bg-background/70 backdrop-blur-md hover:shadow-lg transition-all duration-300 h-full">
-              <div className="p-6 md:p-8">
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold mb-2">Connect With Me</h3>
-                  <p className="text-muted-foreground">
-                    Follow me on social media or check out my work
-                  </p>
-                </div>
+            </motion.div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {socialLinks.map((link, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      viewport={{ once: true }}
-                    >
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(
-                          "flex flex-col items-center justify-center p-4 rounded-lg border border-border/30 transition-all",
-                          "hover:border-primary/50 bg-background/50",
-                          link.color,
-                          "h-full"
-                        )}
-                      >
-                        <div className={cn("w-10 h-10 flex items-center justify-center rounded-lg mb-2", link.bgColor)}>
-                          {link.icon}
-                        </div>
-                        <span className="font-medium text-sm">{link.name}</span>
-                      </a>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="mt-8 pt-6 border-t border-border/30">
-                  <h4 className="font-medium mb-4">Direct Downloads</h4>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button variant="outline" className="flex-1" asChild>
-                      <a href="/resume.pdf" download>
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Resume
-                      </a>
-                    </Button>
-                   
+            {/* Right Column - Contact Info & Social */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Contact Methods */}
+              <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" />
+                    Contact Information
+                  </h3>
+                  <div className="space-y-3">
+                    {contactMethods.map((method, index) => {
+                      const Icon = method.icon;
+                      return (
+                        <motion.div
+                          key={method.label ?? index}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          className={cn(
+                            "group relative overflow-hidden rounded-xl border border-border/50",
+                            "bg-gradient-to-br transition-all duration-300",
+                            method.gradient,
+                            "hover:border-primary/50 hover:shadow-md"
+                          )}
+                        >
+                          <div className="flex items-center justify-between p-3.5">
+                            <a
+                              href={method.href}
+                              target={method.href.startsWith("http") ? "_blank" : undefined}
+                              rel={method.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                              className="flex items-center gap-3 flex-1 min-w-0"
+                              aria-label={method.label}
+                            >
+                              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-background/50 flex items-center justify-center group-hover:bg-background/70 transition-colors">
+                                <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                                  {method.label}
+                                </p>
+                                <p className="text-sm font-semibold truncate">{method.value}</p>
+                              </div>
+                            </a>
+                            {method.copyable && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="flex-shrink-0 h-9 w-9 rounded-lg hover:bg-background/70"
+                                onClick={() => copyToClipboard(method.value, method.label)}
+                                aria-label={`Copy ${method.label}`}
+                              >
+                                {copiedItem === method.label ? (
+                                  <CheckCircle2 className="h-4 w-4 text-green-500" aria-hidden="true" />
+                                ) : (
+                                  <Copy className="h-4 w-4" aria-hidden="true" />
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
+                </CardContent>
+              </Card>
 
-        {/* Call to Action */}
+              {/* Social Links */}
+              <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-primary" aria-hidden="true" />
+                    Connect With Me
+                  </h3>
+                  <div className="space-y-3">
+                    {socialLinks.map((link, index) => {
+                      const Icon = link.icon;
+                      return (
+                        <motion.a
+                          key={link.name ?? index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          whileHover={{ x: 4 }}
+                          className="group flex items-center gap-3 p-3.5 rounded-xl border border-border/50 bg-background/30 hover:bg-background/50 hover:border-primary/50 hover:shadow-md transition-all"
+                          aria-label={`Open ${link.name}`}
+                        >
+                          <div
+                            className={cn(
+                              "w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0",
+                              "bg-gradient-to-br text-white transition-transform group-hover:scale-110",
+                              link.gradient
+                            )}
+                          >
+                            <Icon className="w-5 h-5" aria-hidden="true" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-sm">{link.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{link.description}</p>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" aria-hidden="true" />
+                        </motion.a>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              
+            </motion.div>
+          </div>
+
+
+                  
+        {/* Response Time Notice */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
           viewport={{ once: true }}
-          className="mt-16 text-center"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
         >
-          <p className="text-lg text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Looking forward to hearing from you! I typically respond within 24-48 hours.
-          </p>
-          <Button size="lg" asChild>
-            <a href="#contact">
-              <Mail className="h-5 w-5 mr-2" />
-              Send Me a Message
-            </a>
-          </Button>
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-primary/20">
+            <CheckCircle2 className="w-5 h-5 text-primary" />
+            <p className="text-sm font-medium">
+              Average response time: <span className="text-primary">24-48 hours</span>
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ExternalLink, Folder, Filter, Layout, Server, Search , Smartphone, Monitor, Github, Lock, ImageIcon  } from "lucide-react";
+import { ExternalLink, Folder, Filter, Layout, Server, Search, Smartphone, Monitor, Github, Lock, ImageIcon, X } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 type ProjectCategory = "static" | "fullstack" | "mobile" | "desktop" | "all";
 
@@ -45,107 +46,106 @@ function ProjectsSection() {
 
 
   const projects: Project[] = [
-  {
-    title: "SK Tradings",
-    description: "A professional company website for SK Tradings, showcasing their metal scrap trading business and promoting dismantling joint sales. Features responsive design, contact forms, and service highlights with optimized performance.",
-    tags: ["Vite", "React", "Tailwind CSS", "Responsive Design"],
-    category: "static",
-    imageUrl: "/sktrading.png",
-    liveUrl: "https://www.sktradings.in",
-    urltext: "www.sktradings.in",
-    featured: true
-  },
     {
-    title: "Key2YourHome",
-    description: "A comprehensive real estate management platform featuring property listings, advanced search filters, and a complete admin dashboard for property management with user authentication and authorization.",
-    tags: ["Django", "PostgreSQL", "Flowbite", "REST API"],
-    category: "fullstack",
-    imageUrl: "/key2yourhome.png",
-    liveUrl: "https://www.key2yourhome.co.in",
-    urltext: "www.key2yourhome.co.in",
-    featured: true
-  },
-  {
-    title: "InitCore",
-    description: "A cutting-edge digital solutions company website featuring modern UI/UX design principles. Implemented with performance optimization techniques and smooth animations for enhanced user engagement.",
-    tags: ["Next.js", "Tailwind CSS", "Framer Motion", "SSR"],
-    category: "static",
-    imageUrl: "/initcore.png",
-    liveUrl: "https://initcore.in",
-    urltext: "www.initcore.in"
-  },
-
-  {
-    title: "QSync Queue Management",
-    description: "An innovative queue management system designed to streamline customer flow in high-traffic environments. Features real-time queue updates, multi-platform support, and analytics dashboard.",
-    tags: ["Spring Boot", "Kotlin", "Flask", "Streamlit", "Vite"],
-    category: "fullstack",
-    imageUrl: "/qsync.png",
-    githubUrl: "https://github.com/hamzakhan0712/qsync-frontend.git",
-    liveUrl: "",
-    urltext: "Proprietary System (Mobile App Available)"
-  },
+      title: "Key2YourHome",
+      description: "A comprehensive full-stack real estate platform built with Django that connects property buyers, sellers, and renters. Features intuitive interface, powerful search capabilities, OAuth authentication, and robust property management tools with Grappelli admin interface.",
+      tags: ["Django 5.2.1", "PostgreSQL", "Tailwind CSS", "OAuth", "Grappelli"],
+      category: "fullstack",
+      imageUrl: "/key2yourhome.png",
+      liveUrl: "https://www.key2yourhome.co.in",
+      urltext: "www.key2yourhome.co.in",
+      featured: true
+    },
     {
-    title: "CallCenter CRM",
-    description: "A multi-role call center management system with comprehensive features for agents, supervisors, and administrators. Includes call logging, performance metrics, and real-time monitoring capabilities.",
-    tags: ["Django", "PostgreSQL", "HTMX", "WebSockets"],
-    category: "fullstack",
-    imageUrl: "/crm.png",
-    githubUrl: "https://github.com/hamzakhan0712/InitCore_CallCenter_CRM.git",
-    liveUrl: "",
-    urltext: "Enterprise Solution (On-premise Deployment)"
-  },
-  {
-    title: "ICTMT Conference 2025",
-    description: "Official conference website for International Conference on Technology in Mathematics Teaching. Features event schedules, speaker profiles, registration system, and abstract submission portal.",
-    tags: ["Vite", "ShadCN", "Tailwind CSS", "Responsive Design"],
-    category: "static",
-    imageUrl: "/ictmt.png",
-    liveUrl: "https://ictmt-2025.vercel.app",
-    urltext: "ictmt-2025.vercel.app"
-  },
-  {
-    title: "International Conference on Sustainable Technologies",
-    description: "Official website for ICST 2023 - An international conference hosted by Saraswati College of Engineering. Features conference details, speaker profiles, paper submission portal, and registration system with payment integration.",
-    tags: ["Next.js", "Tailwind CSS", "Shadcn" ],
-    category: "static",
-    imageUrl: "/sustech.jpg",
-    liveUrl: "https://scoe.vercel.app/",
-    githubUrl: "https://github.com/yourusername/icst-conference",
-    urltext: "",
-  },
-   {
-    title: "FaceAuth Attendance System",
-    description: "Android application for student attendance management using facial recognition technology. Implements machine learning models for accurate identification with offline capabilities.",
-    tags: ["Kotlin", "TensorFlow Lite", ],
-    category: "mobile",
-    imageUrl: "",
-    githubUrl: "https://github.com/hamzakhan0712/Face_Recognition_attendance_App.git",
-    liveUrl: "",
-    urltext: "Enterprise Mobile Application"
-  },
-  {
-    title: "DineEase POS System",
-    description: "Windows desktop application for restaurant billing and inventory management with thermal printer integration. Features table management, order tracking, and comprehensive reporting.",
-    tags: ["C#", ".NET", "SQLite", "Thermal Printing"],
-    category: "desktop",
-    imageUrl: "",
-    githubUrl: "https://github.com/hamzakhan0712/Resturant_Bill_Desktop_application.git",
-    liveUrl: "",
-    urltext: "Desktop Application (Installation Required)"
-  },
-  {
-    title: "Tarique Perfumes E-Commerce",
-    description: "Complete e-commerce solution for luxury perfumes with product catalog, shopping cart, and secure checkout. Includes admin panel for inventory and order management.",
-    tags: ["Django", "PostgreSQL", "Stripe", "HTMX"],
-    category: "fullstack",
-    imageUrl: "",
-    githubUrl: "https://github.com/hamzakhan0712/tariq_perfumes.git",
-    liveUrl: "",
-    urltext: "No Url"
-  }
-];
-
+      title: "SK Trading Co.",
+      description: "A modern, high-performance import/export trading website built with Next.js 15 and Turbopack. Features comprehensive SEO optimization, secure reCAPTCHA-protected contact forms, Google Sheets integration, and seamless email handling with Nodemailer.",
+      tags: ["Next.js 15", "Turbopack", "Tailwind CSS", "Framer Motion", "Nodemailer", "reCAPTCHA"],
+      category: "static",
+      imageUrl: "/sktrading.png",
+      liveUrl: "https://www.sktradings.in",
+      urltext: "www.sktradings.in",
+      featured: true
+    },
+    {
+      title: "InitCore",
+      description: "A cutting-edge digital solutions company website featuring modern UI/UX design principles. Implemented with performance optimization techniques and smooth animations for enhanced user engagement.",
+      tags: ["Next.js", "Tailwind CSS", "Framer Motion", "SSR"],
+      category: "static",
+      imageUrl: "/initcore.png",
+      liveUrl: "https://initcore.in",
+      urltext: "www.initcore.in"
+    },
+    {
+      title: "QSync Queue Management",
+      description: "Modern responsive queue management SPA with real-time WebSocket updates. Built with React 19 and Vite, featuring Shadcn UI components, React Query for efficient data fetching, and Zustand for state management. Seamlessly integrates with Java Spring Boot backend.",
+      tags: ["React 19", "Vite", "WebSocket", "React Query", "Zustand", "Shadcn UI"],
+      category: "fullstack",
+      imageUrl: "/qsync.png",
+      githubUrl: "",
+      liveUrl: "",
+      urltext: "Full Stack Application (Backend: Java Spring Boot)"
+    },
+    {
+      title: "InitCore CRM CallCenter",
+      description: "Production-ready CRM system engineered for call centers with Django Channels for real-time WebSocket communication. Features multi-role access, lead management, payment processing, PDF invoice generation, attendance tracking, and comprehensive analytics dashboard.",
+      tags: ["Django", "PostgreSQL", "Django Channels", "WebSocket", "PDF Generation"],
+      category: "fullstack",
+      imageUrl: "/crm.png",
+      githubUrl: "",
+      liveUrl: "",
+      urltext: "Enterprise Solution (On-premise Deployment)"
+    },
+    {
+      title: "ICTMT Conference 2025",
+      description: "Modern conference website for International Conference on Technology, Mathematics, and Teaching built with React 19 and Vite 6. Features smooth Framer Motion animations, Swiper carousels, Radix UI components, and comprehensive event information with responsive design.",
+      tags: ["React 19", "Vite 6", "Framer Motion", "Radix UI", "Swiper"],
+      category: "static",
+      imageUrl: "/ictmt.png",
+      githubUrl: "https://github.com/hamzakhan0712/ICTMT2025-Conference.git",
+      liveUrl: "",
+      urltext: "Conference Website (Source Code Available)"
+    },
+    {
+      title: "Sustainable Technology Conference 2025",
+      description: "Comprehensive digital platform for SUSTECH 2025 conference focusing on green technology, AI for sustainability, and sustainable mobility. Built with React and modern web technologies featuring elegant animations and responsive design for academia and industry collaboration.",
+      tags: ["React", "Vite", "Tailwind CSS", "Framer Motion", "Radix UI"],
+      category: "static",
+      imageUrl: "/sustech.jpg",
+      githubUrl: "https://github.com/hamzakhan0712/SUSTECH2025-Conference.git",
+      liveUrl: "",
+      urltext: "Academic Conference Platform (Open Source)"
+    },
+    {
+      title: "FaceTrack Attendance",
+      description: "Cutting-edge Android application leveraging facial recognition with TensorFlow for contactless student attendance tracking. Built with Kotlin for native performance and Django backend, offering both online and offline functionality with ML-powered accurate identification.",
+      tags: ["Kotlin", "Django", "TensorFlow", "ML Kit", "Android"],
+      category: "mobile",
+      imageUrl: "",
+      githubUrl: "https://github.com/hamzakhan0712/Face_Recognition_attendance_App.git",
+      liveUrl: "",
+      urltext: "Enterprise Mobile Application"
+    },
+    {
+      title: "Tariq Perfumes E-Commerce",
+      description: "Full-stack perfume retail and wholesale platform with dual pricing models, dynamic product catalog, shopping cart, and order processing. Built with Django and AdminLTE, featuring comprehensive inventory management and responsive design optimized for the fragrance industry.",
+      tags: ["Django", "PostgreSQL", "AdminLTE", "JavaScript", "Inventory Management"],
+      category: "fullstack",
+      imageUrl: "/ecommerce.png",
+      githubUrl: "https://github.com/hamzakhan0712/tariq_perfumes.git",
+      liveUrl: "",
+      urltext: "E-Commerce Platform (Source Code Available)"
+    },
+    {
+      title: "FlaskSearch API",
+      description: "Production-ready RESTful API integrating Flask with Elasticsearch for powerful full-text search through Shakespeare plays. Demonstrates best practices with lightning-fast search results, flexible query options, and scalable architecture for handling large datasets and high-traffic scenarios.",
+      tags: ["Python 3", "Flask", "Elasticsearch", "REST API", "NoSQL"],
+      category: "fullstack",
+      imageUrl: "/flaskapi.png",
+      githubUrl: "https://github.com/hamzakhan0712/FlaskSearch-API.git",
+      liveUrl: "",
+      urltext: "RESTful Search API"
+    }
+  ];
 
 
   // Filter projects based on category and search query
@@ -159,245 +159,371 @@ function ProjectsSection() {
     return matchesCategory && matchesSearch;
   });
 
+  const categoryConfig = {
+    all: { label: "All Projects", icon: Filter, count: projects.length },
+    static: { label: "Static Websites", icon: Layout, count: projects.filter(p => p.category === "static").length },
+    fullstack: { label: "Full Stack", icon: Server, count: projects.filter(p => p.category === "fullstack").length },
+    mobile: { label: "Mobile Apps", icon: Smartphone, count: projects.filter(p => p.category === "mobile").length },
+    desktop: { label: "Desktop Apps", icon: Monitor, count: projects.filter(p => p.category === "desktop").length },
+  };
+
+  const categoryStyles = {
+    static: {
+      bg: 'bg-blue-500 dark:bg-blue-500',
+      text: 'text-white',
+      border: 'border-blue-500/20',
+      icon: Layout
+    },
+    fullstack: {
+      bg: 'bg-green-500 dark:bg-green-500',
+      text: 'text-white',
+      border: 'border-green-500/20',
+      icon: Server
+    },
+    mobile: {
+      bg: 'bg-purple-500 dark:bg-purple-500',
+      text: 'text-white',
+      border: 'border-purple-500/20',
+      icon: Smartphone
+    },
+    desktop: {
+      bg: 'bg-orange-500 dark:bg-orange-500',
+      text: 'text-white',
+      border: 'border-orange-500/20',
+      icon: Monitor
+    }
+  };
+
   return (
- 
-    <section id="projects" ref={sectionRef} className="relative py-10 md:py-22 md:px-12 lg:px-24 overflow-hidden reveal-container">
-  {/* Local decorative elements */}
-  <div className="absolute top-20 right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl" />
-  <div className="absolute bottom-20 left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
-
-  <div className="container mx-auto relative z-10">
-    <div className="text-center mb-12 reveal-content">
-      <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full border border-primary/20 bg-background/50 backdrop-blur-sm text-sm font-medium">
-        <span className="text-primary mr-2">✦</span>
-        My Work
-        <span className="text-primary ml-2">✦</span>
+    <section id="projects" ref={sectionRef} className="relative py-20 md:py-32 overflow-hidden reveal-container">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute top-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.1, 0.15, 0.1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+          className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl"
+        />
       </div>
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-        Featured <span className="gradient-text bg-gradient-to-r from-white via-black to-white">Projects</span>
-      </h2>
-      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-        A collection of my projects across different platforms and technologies.
-      </p>
-    </div>
 
-    {/* Filter Tabs */}
-    <div className="flex flex-wrap justify-center gap-3 mb-12 reveal-content" style={{transitionDelay: "0.1s"}}>
-      <Button
-        variant={filter === "all" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setFilter("all")}
-        className="rounded-full transition-all duration-300 flex items-center gap-2"
-      >
-        <Filter className="h-4 w-4" />
-        All Projects
-      </Button>
-      <Button
-        variant={filter === "static" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setFilter("static")}
-        className="rounded-full transition-all duration-300 flex items-center gap-2"
-      >
-        <Layout className="h-4 w-4" />
-        Static Website
-      </Button>
-      <Button
-        variant={filter === "fullstack" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setFilter("fullstack")}
-        className="rounded-full transition-all duration-300 flex items-center gap-2"
-      >
-        <Server className="h-4 w-4" />
-        Full Stack Web
-      </Button>
-      <Button
-        variant={filter === "mobile" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setFilter("mobile")}
-        className="rounded-full transition-all duration-300 flex items-center gap-2"
-      >
-        <Smartphone className="h-4 w-4" />
-        Mobile App
-      </Button>
-      <Button
-        variant={filter === "desktop" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setFilter("desktop")}
-        className="rounded-full transition-all duration-300 flex items-center gap-2"
-      >
-        <Monitor className="h-4 w-4" />
-        Desktop App
-      </Button>
-
-      {/* Search Input */}
-      <div className="relative ml-2">
-        <div className="flex items-center border border-primary/20 rounded-full bg-background/50 backdrop-blur-sm overflow-hidden">
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="py-2 px-4 bg-transparent outline-none text-sm w-full max-w-[150px] md:max-w-[200px]"
-          />
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Search className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
-
-    {/* Project Count */}
-    <div className="text-center mb-8 text-sm text-muted-foreground">
-      Showing {filteredProjects.length} of {projects.length} projects
-    </div>
-
-    {/* Projects Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal-content" style={{transitionDelay: "0.2s"}}>
-      {filteredProjects.length > 0 ? (
-        filteredProjects.map((project, index) => {
-          // Category styling configuration
-          const categoryStyles = {
-            static: {
-              bg: 'bg-blue-500/10',
-              text: 'text-blue-500',
-              icon: <Layout className="h-4 w-4 mr-1" />
-            },
-            fullstack: {
-              bg: 'bg-green-500/10',
-              text: 'text-green-500',
-              icon: <Server className="h-4 w-4 mr-1" />
-            },
-            mobile: {
-              bg: 'bg-purple-500/10',
-              text: 'text-purple-500',
-              icon: <Smartphone className="h-4 w-4 mr-1" />
-            },
-            desktop: {
-              bg: 'bg-orange-500/10',
-              text: 'text-orange-500',
-              icon: <Monitor className="h-4 w-4 mr-1" />
-            }
-          };
-
-          const currentCategory = categoryStyles[project.category as keyof typeof categoryStyles] || 
-                                categoryStyles.static;
-
-          return (
-            <Card
-              key={index}
-              className="card-hover border-border overflow-hidden bg-background/30 backdrop-blur-md hover:bg-background/40 transition-all duration-300 flex flex-col h-full"
-            >
-              {project.featured && (
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="px-2 py-1 bg-blue-700 text-white text-xs font-medium rounded-full">
-                    Featured
-                  </span>
-                </div>
-              )}
-              <CardHeader className="relative p-0">
-                {project.imageUrl ? (
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={project.imageUrl}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video bg-gradient-to-br from-secondary/30 to-muted/50 flex flex-col items-center justify-center gap-2 p-4 text-center">
-                    <ImageIcon className="h-10 w-10 text-muted-foreground/50" />
-                    <span className="text-sm text-muted-foreground/70">No preview available</span>
-                    <span className="text-xs text-muted-foreground/50">{project.title}</span>
-                  </div>
-                )}
-              </CardHeader>
-
-              <CardContent className="flex-grow p-6">
-                <div className="mb-2">
-                  <span className={`text-xs px-2 py-1 rounded-full inline-flex items-center ${currentCategory.bg} ${currentCategory.text}`}>
-                    {currentCategory.icon}
-                    {project.category === 'static' && 'Static Website'}
-                    {project.category === 'fullstack' && 'Full Stack Web'}
-                    {project.category === 'mobile' && 'Mobile App'}
-                    {project.category === 'desktop' && 'Desktop App'}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold mb-2 font-serif">{project.title}</h3>
-                <p className="text-muted-foreground mb-4 text-sm">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="text-xs px-2 py-1 rounded-full bg-secondary/50 backdrop-blur-sm text-secondary-foreground">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-
-              <CardFooter className="p-6 pt-0 flex flex-col gap-2">
-                {project.liveUrl ? (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Button variant="outline" className="w-full group">
-                      <span className="flex items-center justify-center gap-2">
-                        View Live Project
-                        <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </span>
-                    </Button>
-                  </a>
-                ) : project.githubUrl ? (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Button variant="outline" className="w-full group">
-                      <span className="flex items-center justify-center gap-2">
-                        View on GitHub
-                        <Github className="h-4 w-4" />
-                      </span>
-                    </Button>
-                  </a>
-                ) : (
-                  <Button variant="outline" className="w-full" disabled>
-                    <span className="flex items-center justify-center gap-2">
-                      Source Code Private
-                      <Lock className="h-4 w-4" />
-                    </span>
-                  </Button>
-                )}
-                
-                <div className="text-xs text-muted-foreground text-center">
-                  {project.urltext}
-                </div>
-              </CardFooter>
-            </Card>
-          );
-        })
-      ) : (
-        <div className="col-span-full text-center py-12">
-          <p className="text-muted-foreground">No projects found matching your criteria.</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setFilter("all");
-              setSearchQuery("");
-            }}
-            className="mt-4"
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center justify-center px-4 py-2 mb-6 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm text-sm font-medium"
           >
-            Reset Filters
-          </Button>
+            <Folder className="w-4 h-4 text-primary mr-2" />
+            Portfolio
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+          >
+            Featured <span className="gradient-text">Projects</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+          >
+            A showcase of my work across web development, mobile apps, and enterprise solutions built with modern technologies and best practices.
+          </motion.p>
         </div>
-      )}
-    </div>
-  </div>
-</section>
 
+        {/* Filters & Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-12"
+        >
+          {/* Category Filters */}
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {(Object.keys(categoryConfig) as ProjectCategory[]).map((category) => {
+              const config = categoryConfig[category];
+              const Icon = config.icon;
+              const isActive = filter === category;
+
+              return (
+                <motion.button
+                  key={category}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setFilter(category)}
+                  className={`
+                    relative px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300
+                    ${isActive 
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
+                      : 'bg-secondary/50 hover:bg-secondary text-foreground border border-border/50 hover:border-border'
+                    }
+                  `}
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon className="w-4 h-4" />
+                    <span>{config.label}</span>
+                    <span className={`
+                      ml-1 px-1.5 py-0.5 rounded-full text-xs font-semibold
+                      ${isActive ? 'bg-primary-foreground/20' : 'bg-muted'}
+                    `}>
+                      {config.count}
+                    </span>
+                  </span>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-20" />
+              <input
+                type="text"
+                placeholder="Search projects by name, description, or technology..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-12 py-3 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-secondary transition-colors"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Results Count */}
+          <div className="text-center mt-4 text-sm text-muted-foreground">
+            {filteredProjects.length === projects.length ? (
+              <span>Showing all {projects.length} projects</span>
+            ) : (
+              <span>
+                Found {filteredProjects.length} of {projects.length} projects
+              </span>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Projects Grid */}
+        <AnimatePresence mode="wait">
+          {filteredProjects.length > 0 ? (
+            <motion.div
+              key="projects-grid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            >
+              {filteredProjects.map((project, index) => {
+                const categoryStyle = categoryStyles[project.category as keyof typeof categoryStyles];
+                const CategoryIcon = categoryStyle.icon;
+
+                return (
+                  <motion.div
+                    key={`${project.title}-${index}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -8 }}
+                    className="h-full"
+                  >
+                    <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 h-full flex flex-col">
+                      {/* Featured Badge */}
+                      {project.featured && (
+                        <motion.div
+                          initial={{ scale: 0, rotate: -45 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                          className="absolute top-4 left-4 z-20"
+                        >
+                          <span className="px-3 py-1 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold rounded-full shadow-lg flex items-center gap-1">
+                            <span className="animate-pulse">⭐</span>
+                            Featured
+                          </span>
+                        </motion.div>
+                      )}
+
+                      {/* Project Image */}
+                      <CardHeader className="relative p-0 overflow-hidden">
+                        {project.imageUrl ? (
+                          <div className="aspect-video overflow-hidden bg-muted">
+                            <img
+                              src={project.imageUrl}
+                              alt={project.title}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+                        ) : (
+                          <div className="aspect-video bg-gradient-to-br from-secondary/30 to-muted/50 flex flex-col items-center justify-center gap-3 p-6 text-center">
+                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                              <ImageIcon className="w-8 h-8 text-primary/50" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-foreground/70">Preview Coming Soon</p>
+                              <p className="text-xs text-muted-foreground mt-1">{project.title}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Category Badge Overlay */}
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className={`
+                            px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-md border
+                            flex items-center gap-1.5 shadow-lg
+                            ${categoryStyle.bg} ${categoryStyle.text} ${categoryStyle.border}
+                          `}>
+                            <CategoryIcon className="w-3.5 h-3.5" />
+                            {project.category === 'static' && 'Static Site'}
+                            {project.category === 'fullstack' && 'Full Stack'}
+                            {project.category === 'mobile' && 'Mobile'}
+                            {project.category === 'desktop' && 'Desktop'}
+                          </span>
+                        </div>
+                      </CardHeader>
+
+                      {/* Project Content */}
+                      <CardContent className="flex-grow p-6 space-y-4">
+                        <div>
+                          <h3 className="text-xl font-bold mb-2 font-serif group-hover:text-primary transition-colors">
+                            {project.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                            {project.description}
+                          </p>
+                        </div>
+
+                        {/* Tech Stack Tags */}
+                        <div className="flex flex-wrap gap-2">
+                          {project.tags.map((tag, i) => (
+                            <span
+                              key={i}
+                              className="text-xs px-2.5 py-1 rounded-md bg-secondary/50 text-secondary-foreground border border-border/30 hover:border-border transition-colors"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </CardContent>
+
+                      {/* Project Footer */}
+                      <CardFooter className="p-6 pt-0 flex flex-col gap-3">
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 w-full">
+                          {project.liveUrl ? (
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                              <Button variant="default" size="sm" className="w-full group/btn">
+                                <span className="flex items-center gap-2">
+                                  View Live
+                                  <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
+                                </span>
+                              </Button>
+                            </a>
+                          ) : project.githubUrl ? (
+                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                              <Button variant="outline" size="sm" className="w-full group/btn">
+                                <span className="flex items-center gap-2">
+                                  <Github className="w-3.5 h-3.5" />
+                                  View Code
+                                </span>
+                              </Button>
+                            </a>
+                          ) : (
+                            <Button variant="outline" size="sm" className="flex-1" disabled>
+                              <span className="flex items-center gap-2">
+                                <Lock className="w-3.5 h-3.5" />
+                                Private
+                              </span>
+                            </Button>
+                          )}
+
+                          {project.githubUrl && project.liveUrl && (
+                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                              <Button variant="ghost" size="sm" className="aspect-square p-0 w-9">
+                                <Github className="w-4 h-4" />
+                              </Button>
+                            </a>
+                          )}
+                        </div>
+
+                        {/* URL Text */}
+                        {project.urltext && (
+                          <div className="text-xs text-muted-foreground text-center truncate w-full">
+                            {project.urltext}
+                          </div>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-results"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="text-center py-16"
+            >
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted/50 mb-6">
+                <Search className="w-10 h-10 text-muted-foreground/50" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No Projects Found</h3>
+              <p className="text-muted-foreground mb-6">
+                Try adjusting your filters or search query
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setFilter("all");
+                  setSearchQuery("");
+                }}
+                className="group"
+              >
+                <span className="flex items-center gap-2">
+                  Reset Filters
+                  <X className="w-4 h-4 transition-transform group-hover:rotate-90" />
+                </span>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
   );
 }
 

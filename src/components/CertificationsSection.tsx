@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ExternalLink,
-  Download,
   Award,
   Trophy,
   Code2,
   Briefcase,
-  ChevronDown,
-  ChevronUp,
+  Calendar,
+  MapPin,
   X,
+  ZoomIn,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type AchievementType = "certification" | "hackathon" | "internship" | "award";
 
@@ -35,412 +36,500 @@ interface Achievement {
 }
 
 export default function AchievementsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [activeFilter, setActiveFilter] = useState<AchievementType | "all">("all");
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [fullScreenImage, setFullScreenImage] = useState<{
     url: string;
     title: string;
   } | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  // Sample achievement data - replace with your actual achievements
-  const achievements: Achievement[] = [
-      {
-      "id": "1",
-      "type": "hackathon",
-      "title": "CODECRAFTERS 2.0",
-      "issuer": "Saraswati College of Engineering",
-      "date": "March 2025",
-      "prize": "Participation",
-      "location": "Kharghar",
-      "skills": ["Spring", "React", "REST API", "Team Leadership"],
-      "image": "/hackathon1.jpg",
-      "description": "Participated in the 'CODECRAFTERS 2.0' hackathon held from 15th to 16th March 2025 at Saraswati College of Engineering, Kharghar, representing InitCore. Contributed to the development of a digital asset management solution for financial instruments as part of a collaborative team effort."
-    },
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("reveal-active");
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-    {
-      id: "2",
-      type: "certification",
-      title: "CISCO Python Essentials",
-      issuer: "CISCO Networking Academy",
-      date: "June 2024",
-      skills: ["Python"],
-      image: "/certificate1.jpg",
-      description:
-        "Completed Python Essentials 1 by Cisco & OpenEDG. Gained hands-on skills in Python 3 programming, algorithms, and core libraries. Prepared for PCEP certification.",
-    },
-    {
-      "id": "3",
-      "type": "award",
-      "title": "SCOE AVISHKAR 2025 - Project Competition",
-      "issuer": "Saraswati College of Engineering",
-      "date": "April 2025",
-      "skills": ["Project Leadership", "Team Management", "Engineering Innovation"],
-      "image": "/award1.jpg",
-      "description": "Secured a position 2nd in the 'SCOE AVISHKAR - 2025' Project Competition held on 4th April 2025 as the Team Leader, showcasing excellence in project execution and technical innovation."
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
     }
 
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  const achievements: Achievement[] = [
+    {
+      id: "1",
+      type: "hackathon",
+      title: "CODECRAFTERS 2.0",
+      issuer: "Saraswati College of Engineering",
+      date: "March 16, 2025",
+      prize: "Participant",
+      location: "Kharghar",
+      skills: ["Spring Boot", "React", "REST API", "Team Leadership"],
+      image: "/hackathon1.jpg",
+      description:
+        "Participated in the 'CODECRAFTERS 2.0' hackathon, representing InitCore. Contributed to developing a digital asset management solution for financial instruments as part of a collaborative team effort.",
+    },
+    {
+      id: "2",
+      type: "award",
+      title: "SCOE AVISHKAR 2025 - Project Competition",
+      issuer: "Saraswati College of Engineering",
+      date: "April 04, 2025",
+      prize: "2nd Place",
+      location: "Kharghar",
+      skills: ["Project Leadership", "Team Management", "Engineering Innovation"],
+      image: "/award1.jpg",
+      description:
+        "Secured 2nd position in the 'SCOE AVISHKAR - 2025' Project Competition as Team Leader, showcasing excellence in project execution and technical innovation.",
+    },
+    {
+      id: "3",
+      type: "certification",
+      title: "Introduction to Data Science",
+      issuer: "Great Learning",
+      date: "October 22, 2025",
+      skills: [
+        "Data Analysis",
+        "Statistics",
+        "Python",
+        "Data Visualization",
+        "Machine Learning Foundations"
+      ],
+      image: "/certificate1.png",
+      description:
+        "Completed the 'Introduction to Data Science' course from Great Learning. Gained foundational skills in data analysis, statistical methods, Python for data science, and introductory machine learning concepts."
+    },
+
+    
   ];
+
+  const categoryConfig = {
+    all: { label: "All", icon: Sparkles, count: achievements.length, color: "primary" },
+    certification: {
+      label: "Certifications",
+      icon: Award,
+      count: achievements.filter((a) => a.type === "certification").length,
+      color: "blue",
+    },
+    hackathon: {
+      label: "Hackathons",
+      icon: Code2,
+      count: achievements.filter((a) => a.type === "hackathon").length,
+      color: "purple",
+    },
+    internship: {
+      label: "Internships",
+      icon: Briefcase,
+      count: achievements.filter((a) => a.type === "internship").length,
+      color: "green",
+    },
+    award: {
+      label: "Awards",
+      icon: Trophy,
+      count: achievements.filter((a) => a.type === "award").length,
+      color: "yellow",
+    },
+  };
 
   const filteredAchievements =
     activeFilter === "all"
       ? achievements
       : achievements.filter((ach) => ach.type === activeFilter);
 
-  const toggleExpand = (id: string) => {
-    setExpandedCard(expandedCard === id ? null : id);
+  const getTypeConfig = (type: AchievementType) => {
+    const configs = {
+      certification: {
+        icon: Award,
+        gradient: "from-blue-500/10 to-cyan-500/10",
+        iconColor: "text-blue-500",
+        borderColor: "border-blue-500/30",
+        bgColor: "bg-blue-500/10",
+      },
+      hackathon: {
+        icon: Code2,
+        gradient: "from-purple-500/10 to-pink-500/10",
+        iconColor: "text-purple-500",
+        borderColor: "border-purple-500/30",
+        bgColor: "bg-purple-500/10",
+      },
+      internship: {
+        icon: Briefcase,
+        gradient: "from-green-500/10 to-emerald-500/10",
+        iconColor: "text-green-500",
+        borderColor: "border-green-500/30",
+        bgColor: "bg-green-500/10",
+      },
+      award: {
+        icon: Trophy,
+        gradient: "from-yellow-500/10 to-orange-500/10",
+        iconColor: "text-yellow-500",
+        borderColor: "border-yellow-500/30",
+        bgColor: "bg-yellow-500/10",
+      },
+    };
+    return configs[type];
   };
-
-  const getTypeIcon = (type: AchievementType) => {
-    switch (type) {
-      case "certification":
-        return <Award className="h-4 w-4" />;
-      case "hackathon":
-        return <Code2 className="h-4 w-4" />;
-      case "internship":
-        return <Briefcase className="h-4 w-4" />;
-      case "award":
-        return <Trophy className="h-4 w-4" />;
-      default:
-        return <Award className="h-4 w-4" />;
-    }
-  };
-
-  const getTypeColor = (type: AchievementType) => {
-    switch (type) {
-      case "certification":
-        return "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300";
-      case "hackathon":
-        return "bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-300";
-      case "internship":
-        return "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300";
-      case "award":
-        return "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-300";
-      default:
-        return "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300";
-    }
-  };
-
- const handleImageClick = (image: string, title: string) => {
-  console.log('Opening image:', image, title); // Debugging
-  setFullScreenImage({ url: image, title });
-};
 
   return (
-    <section id="achievements" className="relative py-10 md:py-28 md:px-12 lg:px-24 overflow-hidden reveal-container">
-      <div className="container mx-auto relative z-10">
-        {/* Section header */}
+    <section
+      id="achievements"
+      ref={sectionRef}
+      className="relative py-20 md:py-32 overflow-hidden reveal-container"
+    >
+      {/* Decorative Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <Badge
-            variant="outline"
-            className="mb-4 bg-background/80 backdrop-blur-sm border-primary/20 text-primary hover:bg-background/90"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+        />
+      </div>
+
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center justify-center px-4 py-2 mb-6 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm text-sm font-medium"
           >
-            <Award className="h-4 w-4 mr-2" />
+            <Trophy className="w-4 h-4 text-primary mr-2" />
             Professional Milestones
-          </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            My{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
-              Achievements
-            </span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Recognitions, certifications, and experiences that demonstrate my
-            skills and dedication.
-          </p>
-        </motion.div>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+          >
+            My <span className="gradient-text">Achievements</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+          >
+            Recognitions, certifications, and experiences that demonstrate my skills and
+            dedication to continuous learning.
+          </motion.p>
+        </div>
 
         {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex flex-wrap justify-center gap-2 mb-8"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-12"
         >
-          <Button
-            variant={activeFilter === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("all")}
-          >
-            All
-          </Button>
-          <Button
-            variant={activeFilter === "certification" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("certification")}
-            className="gap-2"
-          >
-            <Award className="h-4 w-4" />
-            Certifications
-          </Button>
-          <Button
-            variant={activeFilter === "hackathon" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("hackathon")}
-            className="gap-2"
-          >
-            <Code2 className="h-4 w-4" />
-            Hackathons
-          </Button>
-          <Button
-            variant={activeFilter === "internship" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("internship")}
-            className="gap-2"
-          >
-            <Briefcase className="h-4 w-4" />
-            Internships
-          </Button>
-          <Button
-            variant={activeFilter === "award" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("award")}
-            className="gap-2"
-          >
-            <Trophy className="h-4 w-4" />
-            Awards
-          </Button>
+          <div className="flex flex-wrap justify-center gap-3">
+            {(Object.keys(categoryConfig) as Array<keyof typeof categoryConfig>).map(
+              (category) => {
+                const config = categoryConfig[category];
+                const Icon = config.icon;
+                const isActive = activeFilter === category;
+
+                return (
+                  <motion.button
+                    key={category}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveFilter(category)}
+                    className={cn(
+                      "relative px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+                      "flex items-center gap-2",
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                        : "bg-secondary/50 hover:bg-secondary text-foreground border border-border/50 hover:border-border"
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{config.label}</span>
+                    <span
+                      className={cn(
+                        "ml-1 px-1.5 py-0.5 rounded-full text-xs font-semibold",
+                        isActive ? "bg-primary-foreground/20" : "bg-muted"
+                      )}
+                    >
+                      {config.count}
+                    </span>
+                  </motion.button>
+                );
+              }
+            )}
+          </div>
         </motion.div>
 
-        {/* Achievements grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {filteredAchievements.map((achievement) => (
-            <motion.div
-              key={achievement.id}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.2 }}
-              className="h-full"
-            >
-              <div className="h-full flex flex-col bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 overflow-hidden hover:shadow-lg transition-all">
-                {/* Image header */}
-                <div className="relative h-48 bg-gradient-to-br from-primary/10 to-background/50 overflow-hidden group">
-                  {achievement.image ? (
-                    <>
-                      <img
-                        src={achievement.image}
-                        alt={achievement.title}
-                        className="w-full h-full object-cover cursor-zoom-in"
-                        onClick={() =>
-                          handleImageClick(achievement.image, achievement.title)
-                        }
-                      />
-                     
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                      <div className="text-center p-4">
-                        <Award className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-600" />
-                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                          {achievement.type === "certification"
-                            ? "Certification Preview"
-                            : achievement.type === "hackathon"
-                            ? "Hackathon Project"
-                            : achievement.type === "internship"
-                            ? "Company Logo"
-                            : "Award Image"}
+        {/* Achievements Grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFilter}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          >
+            {filteredAchievements.map((achievement, index) => {
+              const typeConfig = getTypeConfig(achievement.type);
+              const TypeIcon = typeConfig.icon;
+
+              return (
+                <motion.div
+                  key={achievement.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onMouseEnter={() => setHoveredCard(achievement.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  whileHover={{ y: -8 }}
+                  className="h-full"
+                >
+                  <div
+                    className={cn(
+                      "group relative overflow-hidden h-full flex flex-col",
+                      "bg-card/50 backdrop-blur-sm rounded-2xl border transition-all duration-300",
+                      "hover:shadow-xl hover:shadow-primary/5",
+                      typeConfig.borderColor
+                    )}
+                  >
+                    {/* Image Section */}
+                    <div className="relative h-56 overflow-hidden">
+                      {achievement.image ? (
+                        <>
+                          <img
+                            src={achievement.image}
+                            alt={achievement.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60" />
+
+                          {/* Zoom Overlay */}
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{
+                              opacity: hoveredCard === achievement.id ? 1 : 0,
+                            }}
+                            className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm cursor-pointer"
+                            onClick={() =>
+                              setFullScreenImage({
+                                url: achievement.image,
+                                title: achievement.title,
+                              })
+                            }
+                          >
+                            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                              <ZoomIn className="w-8 h-8 text-primary" />
+                            </div>
+                          </motion.div>
+                        </>
+                      ) : (
+                        <div
+                          className={cn(
+                            "w-full h-full flex items-center justify-center",
+                            "bg-gradient-to-br",
+                            typeConfig.gradient
+                          )}
+                        >
+                          <TypeIcon
+                            className={cn("w-16 h-16 opacity-30", typeConfig.iconColor)}
+                          />
+                        </div>
+                      )}
+
+                      {/* Type Badge */}
+                      <div className="absolute top-4 left-4">
+                        <Badge
+                          className={cn(
+                            "backdrop-blur-md border flex items-center gap-1.5 shadow-lg",
+                            typeConfig.bgColor,
+                            typeConfig.iconColor,
+                            typeConfig.borderColor
+                          )}
+                        >
+                          <TypeIcon className="w-3.5 h-3.5" />
+                          <span className="capitalize font-semibold">
+                            {achievement.type}
+                          </span>
+                        </Badge>
+                      </div>
+
+                      {/* Prize Badge */}
+                      {achievement.prize && (
+                        <div className="absolute top-4 right-4">
+                          <Badge className="backdrop-blur-md bg-primary/90 text-primary-foreground border-primary/50 shadow-lg">
+                            <Trophy className="w-3 h-3 mr-1" />
+                            {achievement.prize}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 flex flex-col p-6 space-y-4">
+                      {/* Title & Issuer */}
+                      <div>
+                        <h3 className="text-xl font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                          {achievement.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-medium">
+                          {achievement.issuer}
                         </p>
                       </div>
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
-                </div>
 
-                {/* Content */}
-                <div className="flex-1 flex flex-col p-6">
-                  {/* Badge */}
-                  <div className="flex justify-between items-start mb-3">
-                    <Badge
-                      className={cn(
-                        "text-xs font-medium",
-                        getTypeColor(achievement.type))
-                      }
-                    >
-                      {getTypeIcon(achievement.type)}
-                      <span className="ml-2 capitalize">{achievement.type}</span>
-                    </Badge>
-                    <button
-                      onClick={() => toggleExpand(achievement.id)}
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                      aria-label={
-                        expandedCard === achievement.id
-                          ? "Collapse card"
-                          : "Expand card"
-                      }
-                    >
-                      {expandedCard === achievement.id ? (
-                        <ChevronUp className="h-5 w-5" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
+                      {/* Metadata */}
+                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>{achievement.date}</span>
+                        </div>
+                        {achievement.location && (
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span>{achievement.location}</span>
+                          </div>
+                        )}
+                      </div>
 
-                  {/* Title and issuer */}
-                  <h3 className="text-lg font-bold mb-1 line-clamp-1">
-                    {achievement.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {achievement.issuer}
-                  </p>
-
-                  {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-4">
-                    <span>{achievement.date}</span>
-                    {achievement.location && (
-                      <>
-                        <span>•</span>
-                        <span>{achievement.location}</span>
-                      </>
-                    )}
-                    {achievement.prize && (
-                      <>
-                        <span>•</span>
-                        <span className="font-medium text-primary">
-                          {achievement.prize}
-                        </span>
-                      </>
-                    )}
-                    {achievement.duration && (
-                      <>
-                        <span>•</span>
-                        <span>{achievement.duration}</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Expanded content */}
-                  {expandedCard === achievement.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <p className="text-sm text-muted-foreground mb-4">
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                         {achievement.description}
                       </p>
 
-                      <div className="mb-4">
-                        <h4 className="text-xs font-medium text-muted-foreground mb-2">
-                          SKILLS DEMONSTRATED
-                        </h4>
+                      {/* Skills */}
+                      <div className="flex-1">
                         <div className="flex flex-wrap gap-2">
-                          {achievement.skills.map((skill) => (
+                          {achievement.skills.slice(0, 3).map((skill, i) => (
                             <Badge
-                              key={skill}
+                              key={i}
                               variant="secondary"
-                              className="text-xs bg-accent/50 hover:bg-accent/70 text-foreground"
+                              className="text-xs bg-secondary/50 hover:bg-secondary transition-colors"
                             >
                               {skill}
                             </Badge>
                           ))}
+                          {achievement.skills.length > 3 && (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-secondary/50"
+                            >
+                              +{achievement.skills.length - 3}
+                            </Badge>
+                          )}
                         </div>
                       </div>
-                    </motion.div>
-                  )}
 
-                  {/* Actions */}
-                  <div className="mt-auto pt-4 flex gap-2">
-                    {achievement.credentialUrl && (
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 gap-2"
-                      >
-                        <a
-                          href={achievement.credentialUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Verify
-                        </a>
-                      </Button>
-                    )}
-                
+                      {/* Action Button */}
+                      {achievement.credentialUrl && (
+                        <div className="pt-2">
+                          <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="w-full group/btn"
+                          >
+                            <a
+                              href={achievement.credentialUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <span className="flex items-center gap-2">
+                                Verify Credential
+                                <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
+                              </span>
+                            </a>
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-16 text-center"
-        >
-          <Button variant="outline" className="gap-2">
-            <Award className="h-4 w-4" />
-            View Full Achievement History
-          </Button>
-        </motion.div>
+        {/* Empty State */}
+        {filteredAchievements.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16"
+          >
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted/50 mb-6">
+              <Award className="w-10 h-10 text-muted-foreground/50" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">No Achievements Found</h3>
+            <p className="text-muted-foreground mb-6">
+              No {activeFilter !== "all" && categoryConfig[activeFilter].label.toLowerCase()} to
+              display yet.
+            </p>
+            <Button variant="outline" onClick={() => setActiveFilter("all")}>
+              View All Achievements
+            </Button>
+          </motion.div>
+        )}
+      </div>
 
-        {/* Full screen image dialog */}
-        <Dialog
+
+      {/* Full Screen Image Dialog */}
+      <Dialog
         open={!!fullScreenImage}
         onOpenChange={(open) => !open && setFullScreenImage(null)}
-        >
-        <DialogContent className="fixed  flex items-center justify-center p-0 bg-black/90 backdrop-blur-sm border-none max-h-[100dvh]">
-            {fullScreenImage && (
-            <div className="relative w-full h-full flex items-center justify-center p-4">
-                {/* Close button (top-right, fixed position) */}
-                <DialogClose asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute -top-6 -right-6 z-50 rounded-full bg-white/30 hover:bg-white/50 text-white"
-                    onClick={() => setFullScreenImage(null)}
-                >
-                    <X className="h-5 w-5" />
-                    <span className="sr-only">Close</span>
-                </Button>
-                </DialogClose>
+      >
+        <DialogContent className="max-w-none w-screen h-screen p-0 bg-black/95 backdrop-blur-xl border-none overflow-hidden">
+          {fullScreenImage && (
+            <div className="relative w-full h-full flex items-center justify-center">
+             
 
-                {/* Image container (centered with max constraints) */}
-                <div className="relative flex flex-col items-center justify-center w-full h-full">
-                <div className="flex items-center justify-center w-full h-full max-w-[100vw] max-h-[100vh]">
-                    <img
+              {/* Image Container - Centered */}
+              <div className="flex flex-col items-center justify-center gap-6 px-4 py-8 md:px-8 md:py-12 w-full h-full">
+                {/* Image Wrapper with proper constraints */}
+                <div className="flex items-center justify-center w-full h-full max-w-[95vw] max-h-[calc(100vh-8rem)]">
+                  <img
                     src={fullScreenImage.url}
                     alt={fullScreenImage.title}
-                    className="object-contain w-80% h-80% rounded-lg"
-                    style={{
-                        aspectRatio: "auto",
-                    }}
-                    />
+                    className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg shadow-2xl"
+                  />
                 </div>
 
-                {/* Caption (fixed at bottom-center) */}
+                {/* Caption - Below image */}
                 {fullScreenImage.title && (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/30 max-w-[90%]">
-                    <p className="text-sm text-white text-center truncate">
-                        {fullScreenImage.title}
+                  <div className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 max-w-[90vw]">
+                    <p className="text-sm md:text-base text-white font-medium text-center truncate">
+                      {fullScreenImage.title}
                     </p>
-                    </div>
+                  </div>
                 )}
-                </div>
+              </div>
             </div>
-            )}
+          )}
         </DialogContent>
-        </Dialog>
-      </div>
+      </Dialog>
+
+
     </section>
   );
 }
