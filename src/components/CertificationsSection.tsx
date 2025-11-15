@@ -109,6 +109,23 @@ export default function AchievementsSection() {
       description:
         "Completed the 'Introduction to Data Science' course from Great Learning. Gained foundational skills in data analysis, statistical methods, Python for data science, and introductory machine learning concepts."
     },
+    {
+      id: "4",
+      type: "certification",
+      title: "Certification Programme on Aptitude, Lifeskills & Technical Training",
+      issuer: "Saraswati College of Engineering (Facilitated by Campus Credentials)",
+      date: "2025",
+      skills: [
+        "Aptitude",
+        "Logical Reasoning",
+        "Soft Skills",
+        "Communication Skills",
+        "Technical Foundations",
+        "Professional Development"
+      ],
+      image: "/certificate2.png",
+      description: "Successfully completed the 'Certification Programme on Aptitude, Lifeskills & Technical Training' offered by Saraswati College of Engineering and facilitated by Campus Credentials. The program covered aptitude development, logical reasoning, soft skills, communication skills, and technical readiness required for professional growth."
+    }
 
     
   ];
