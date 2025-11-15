@@ -184,7 +184,7 @@ export default function AchievementsSection() {
     <section
       id="achievements"
       ref={sectionRef}
-      className="relative py-20 md:py-32 overflow-hidden reveal-container"
+      className="relative py-12 overflow-hidden reveal-container"
     >
       {/* Decorative Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

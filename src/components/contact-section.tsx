@@ -152,8 +152,8 @@ function ContactSection() {
     {
       icon: Phone,
       label: "Phone",
-      value: "+91 12345 67890",
-      href: "tel:+911234567890",
+      value: "+91 91379 66960",
+      href: "tel:+919137966960",
       copyable: true,
       gradient: "from-green-500/10 to-emerald-500/10",
     },
@@ -161,7 +161,7 @@ function ContactSection() {
       icon: MapPin,
       label: "Location",
       value: "Mumbai, Maharashtra, India",
-      href: "https://maps.google.com?q=Mumbra,India",
+      href: "https://maps.google.com?q=Mumbai,India",
       copyable: false,
       gradient: "from-purple-500/10 to-pink-500/10",
     },
@@ -203,7 +203,7 @@ function ContactSection() {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-20 md:py-32 overflow-hidden reveal-container"
+      className="relative py-12 overflow-hidden reveal-container"
     >
       {/* Decorative Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

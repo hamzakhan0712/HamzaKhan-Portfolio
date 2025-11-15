@@ -125,7 +125,7 @@ function Footer() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <span>Mumbra, Maharashtra, India</span>
+                  <span>Mumbai, Maharashtra, India</span>
                 </div>
               </div>
             </motion.div>

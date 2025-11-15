@@ -47,7 +47,7 @@ function AboutSection() {
 
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-20 md:py-12 overflow-hidden reveal-container">
+    <section id="about" ref={sectionRef} className="relative py-12 overflow-hidden reveal-container">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 md:mb-20">

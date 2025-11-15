@@ -195,7 +195,7 @@ function ProjectsSection() {
   };
 
   return (
-    <section id="projects" ref={sectionRef} className="relative py-20 md:py-32 overflow-hidden reveal-container">
+    <section id="projects" ref={sectionRef} className="relative py-2 overflow-hidden reveal-container">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

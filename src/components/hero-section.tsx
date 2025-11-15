@@ -248,21 +248,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-          className="absolute -bottom-16 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-muted-foreground font-medium">Scroll to explore</span>
-          <a
-            href="#about"
-            className="group p-3 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm hover:border-primary/50 hover:bg-background/70 transition-all duration-300"
-          >
-            <ArrowDown className="w-5 h-5 text-muted-foreground group-hover:text-primary animate-bounce" />
-          </a>
-        </motion.div>
+       
       </div>
     </section>
   );
