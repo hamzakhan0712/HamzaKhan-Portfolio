@@ -66,21 +66,47 @@ export default function AchievementsSection() {
   }, []);
 
   const achievements: Achievement[] = [
-    {
+     {
       id: "1",
-      type: "hackathon",
-      title: "CODECRAFTERS 2.0",
-      issuer: "Saraswati College of Engineering",
-      date: "March 16, 2025",
-      prize: "Participant",
-      location: "Kharghar",
-      skills: ["Spring Boot", "React", "REST API", "Team Leadership"],
-      image: "/hackathon1.jpg",
-      description:
-        "Participated in the 'CODECRAFTERS 2.0' hackathon, representing InitCore. Contributed to developing a digital asset management solution for financial instruments as part of a collaborative team effort.",
+      type: "certification",
+      title: "The Complete Full-Stack Web Development Bootcamp",
+      issuer: "Udemy - By Dr. Angela Yu",
+      date: "November 15, 2025",
+      skills: [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "REST APIs",
+        "Git & GitHub",
+        "Frontend Development",
+        "Backend Development",
+        "Full-Stack Application Development"
+      ],
+      image: "/certificate3.jpg",
+      description: "Completed Udemy’s 'The Complete Full-Stack Web Development Bootcamp' instructed by Dr. Angela Yu. Gained hands-on experience building full-stack applications using HTML, CSS, JavaScript, Node.js, Express, and MongoDB, along with REST API development and version control workflows."
     },
     {
       id: "2",
+      type: "certification",
+      title: "Certification Programme on Aptitude, Lifeskills & Technical Training",
+      issuer: "Saraswati College of Engineering (Facilitated by Campus Credentials)",
+      date: "2025",
+      skills: [
+        "Aptitude",
+        "Logical Reasoning",
+        "Soft Skills",
+        "Communication Skills",
+        "Technical Foundations",
+        "Professional Development"
+      ],
+      image: "/certificate2.png",
+      description: "Successfully completed the 'Certification Programme on Aptitude, Lifeskills & Technical Training' offered by Saraswati College of Engineering and facilitated by Campus Credentials. The program covered aptitude development, logical reasoning, soft skills, communication skills, and technical readiness required for professional growth."
+    },
+    {
+      id: "3",
       type: "award",
       title: "SCOE AVISHKAR 2025 - Project Competition",
       issuer: "Saraswati College of Engineering",
@@ -93,7 +119,20 @@ export default function AchievementsSection() {
         "Secured 2nd position in the 'SCOE AVISHKAR - 2025' Project Competition as Team Leader, showcasing excellence in project execution and technical innovation.",
     },
     {
-      id: "3",
+      id: "4",
+      type: "hackathon",
+      title: "CODECRAFTERS 2.0",
+      issuer: "Saraswati College of Engineering",
+      date: "March 16, 2025",
+      prize: "Participant",
+      location: "Kharghar",
+      skills: ["Spring Boot", "React", "REST API", "Team Leadership"],
+      image: "/hackathon1.jpg",
+      description:
+        "Participated in the 'CODECRAFTERS 2.0' hackathon, representing InitCore. Contributed to developing a digital asset management solution for financial instruments as part of a collaborative team effort.",
+    },
+    {
+      id: "5",
       type: "certification",
       title: "Introduction to Data Science",
       issuer: "Great Learning",
@@ -109,23 +148,9 @@ export default function AchievementsSection() {
       description:
         "Completed the 'Introduction to Data Science' course from Great Learning. Gained foundational skills in data analysis, statistical methods, Python for data science, and introductory machine learning concepts."
     },
-    {
-      id: "4",
-      type: "certification",
-      title: "Certification Programme on Aptitude, Lifeskills & Technical Training",
-      issuer: "Saraswati College of Engineering (Facilitated by Campus Credentials)",
-      date: "2025",
-      skills: [
-        "Aptitude",
-        "Logical Reasoning",
-        "Soft Skills",
-        "Communication Skills",
-        "Technical Foundations",
-        "Professional Development"
-      ],
-      image: "/certificate2.png",
-      description: "Successfully completed the 'Certification Programme on Aptitude, Lifeskills & Technical Training' offered by Saraswati College of Engineering and facilitated by Campus Credentials. The program covered aptitude development, logical reasoning, soft skills, communication skills, and technical readiness required for professional growth."
-    }
+    
+   
+
 
     
   ];
@@ -431,14 +456,14 @@ export default function AchievementsSection() {
                       </div>
 
                       {/* Description */}
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {achievement.description}
                       </p>
 
                       {/* Skills */}
                       <div className="flex-1">
                         <div className="flex flex-wrap gap-2">
-                          {achievement.skills.slice(0, 3).map((skill, i) => (
+                          {achievement.skills.map((skill, i) => (
                             <Badge
                               key={i}
                               variant="secondary"
@@ -447,14 +472,6 @@ export default function AchievementsSection() {
                               {skill}
                             </Badge>
                           ))}
-                          {achievement.skills.length > 3 && (
-                            <Badge
-                              variant="secondary"
-                              className="text-xs bg-secondary/50"
-                            >
-                              +{achievement.skills.length - 3}
-                            </Badge>
-                          )}
                         </div>
                       </div>
 
